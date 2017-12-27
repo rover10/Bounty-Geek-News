@@ -26,8 +26,8 @@ public class Configuration {
 		COMMENT = "comment";
 		STORY = "story";
 		FIRST_ITEM_ID = 16016181L - 100000L;
-		NO_OF_ITEMS_TO_PROCESS = 16016181L; // Total itmes as off now(12/27/2017) from https://hacker-news.firebaseio.com/v0/maxitem.json
-		NO_OF_WORKERS_THREAD = 600;
+		NO_OF_ITEMS_TO_PROCESS = 100000L; // Total itmes as off now(12/27/2017) from https://hacker-news.firebaseio.com/v0/maxitem.json
+		NO_OF_WORKERS_THREAD = 400;
 		FORMAT = ".json";
 		ITEM_URI = "https://hacker-news.firebaseio.com/v0/item/";
 		TOP = 50;
@@ -68,7 +68,5 @@ public class Configuration {
 			this.TOP = TOP;
 			this.INDEX_BASE_EPOC = INDEX_BASE_EPOC;
 	}
-	
-
-	
+		
 }

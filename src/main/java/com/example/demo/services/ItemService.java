@@ -8,12 +8,15 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -30,6 +33,7 @@ import com.example.demo.util.DateUtil;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.javafx.tk.Toolkit.Task;
 
 /**
 	Calendar calendar = Calendar.getInstance();
@@ -62,30 +66,38 @@ public class ItemService {
 	
 	Callable<String> readAndIndexItem(String url) {
 	    return () -> {
-	    	URL obj = new URL(url);
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-			con.setRequestMethod("GET");
-			con.setRequestProperty("User-Agent", "");
-
-			int responseCode = con.getResponseCode();
-			System.out.println("'Get ' " + url);
-			System.out.println("Status: " + responseCode);
-
-			BufferedReader in = new BufferedReader(
-			        new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			
-			in.close();
-			Item item = ItemService.generateItem(response);
-			//addItem(item);
-			addToBriefItem(item);
+		    	try {
+		    	URL obj = new URL(url);
+				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+	
+				con.setRequestMethod("GET");
+				con.setRequestProperty("User-Agent", "");
+	
+				int responseCode = con.getResponseCode();
+				System.out.println("'Get ' " + url);
+				System.out.println("Status: " + responseCode);
+	
+				BufferedReader in = new BufferedReader(
+				        new InputStreamReader(con.getInputStream()));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+	
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				
+				in.close();
+				Item item = ItemService.generateItem(response);
+				//addItem(item);
+				if(item != null)
+					addToBriefItem(item);
+				
 			return response.toString();
+	    	}catch(Exception e) {
+	    		System.out.println("Exception occured while processing URI " + url);
+	    		e.printStackTrace();
+	    		return "{}";
+	    	}
 	    };
 	}
 	
@@ -94,7 +106,7 @@ public class ItemService {
 		//System.out.print(item.getType());
 		
 		//System.out.println("FILTERING ITEMS 0");
-		if(item.getType() !=null  && (item.getType().equals(config.STORY) || item.getType().equals(config.COMMENT)|| item.getType().equals(config.JOB)) && item.getScore() > config.MIN_SCORE ) {
+		if(item.getType() !=null &&  (item.getType().equals(config.STORY) || item.getType().equals(config.COMMENT)|| item.getType().equals(config.JOB)) && item.getScore() > config.MIN_SCORE ) {
 			//System.out.println("FILTERING ITEMS 1");
 			ItemBrief itemBrief = new ItemBrief();
 			itemBrief.setBy(item.getBy());
@@ -171,10 +183,16 @@ public class ItemService {
 	}
 
 	private static Item generateItem(StringBuffer response) throws JsonParseException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		Item item = mapper.readValue(response.toString(), Item.class);
-		//System.out.println("Item created!");
-		return item;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			Item item = mapper.readValue(response.toString(), Item.class);
+			//System.out.println("Item created!");
+			return item;
+		}catch(Exception e) {
+			System.out.println("Exception while mapping object");
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	private void addItem(Item item) {
@@ -209,14 +227,23 @@ public class ItemService {
 			return;
 		}
 		
-		ExecutorService executor = Executors.newFixedThreadPool(config.NO_OF_WORKERS_THREAD);
-		LongStream.range(config.FIRST_ITEM_ID, config.FIRST_ITEM_ID + config.NO_OF_ITEMS_TO_PROCESS)
-	    		  .forEach(i -> { executor.submit(readAndIndexItem(config.ITEM_URI + i + config.FORMAT));
-	    });
-		
 		try {
+			List<Future>  tasks = new LinkedList<Future>();
+			ExecutorService executor = Executors.newFixedThreadPool(config.NO_OF_WORKERS_THREAD);
+			LongStream.range(config.FIRST_ITEM_ID, config.FIRST_ITEM_ID + config.NO_OF_ITEMS_TO_PROCESS)
+		    		  .forEach(i -> { tasks.add(executor.submit(readAndIndexItem(config.ITEM_URI + i + config.FORMAT)));
+		    });
+			
+			tasks.stream().forEach(e->{
+				try {
+					e.get();
+				} catch (InterruptedException | ExecutionException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+			}});
+			
 			executor.shutdown();
-			executor.awaitTermination(500, TimeUnit.MINUTES);
+			//executor.awaitTermination(500, TimeUnit.MINUTES);
 			System.out.println(" Printing map ");
 			System.out.println(" Printing map size = " + this.itemCategorization.size());
 			printMap(this.itemCategorization);
@@ -224,7 +251,7 @@ public class ItemService {
 			System.out.println(" Printing map ");
 			System.out.println(" Printing filter map size = " + this.allFilteredItems);
 			printFilteredItems();
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			System.out.println("Error occured while processing..");
 			e.printStackTrace();
 		}
