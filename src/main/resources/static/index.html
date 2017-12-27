@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>www.tarkol.com</title>
+  <!-- link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" /-->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Catamaran" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" rel="stylesheet">
+  <base href="/">
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="tarkol.png" sizes="32x32">
+  <style>
+
+    body{
+        font-family: 'Open Sans', sans-serif !important;
+        font-size: 13px !important;
+        margin-left:50px;
+        margin-top:10px;
+        margin-right: 50px;
+        background:#f1f1f112;
+    }
+
+   .postInfo{
+   		color:grey;
+   }
+   
+   table{
+       position: relative;
+       width: 100%;
+       background:#deeff51c;
+   }
+   
+   .tableContainer{
+   		background: white;
+    	box-shadow: 0px 0px 20px 1px #80808033 inset;
+    	width: 100%;
+    	padding:20px;	
+    	height:520px;
+    	overflow-y:scroll;
+   }
+   
+   tr:hover {
+    	background: #fbfafa !important;
+    	font-weight: 600;
+	}
+	
+   td{
+   		padding-left:10px;padding-right:10px;
+   	}
+   	
+    </style>
+
+</head>
+<body id='container' ng-app="myApp" ng-controller="myCtrl">
+ 
+  <Form action="/search/" style="margin-left:-12px;margin-top:20px;">
+	
+	<!--input type= "date" ng-model="startDate"> To 
+	<input type = "date" ng-model="endDate" -->
+	
+	
+	
+	<div class="row">
+	<div class="col-md-5">
+	      <div class="col-md-6">
+	        <p class="input-group">
+	          <input type="text" class="form-control" ng-change="searchIfUpdated()" uib-datepicker-popup="{{format}}" ng-model="startDate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+	          <span class="input-group-btn">
+	            <button type="button" class="btn btn-default"  ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+	          </span>
+	        </p>
+	      </div>
+	
+	      <div class="col-md-6">
+	        <p class="input-group">
+	          <input type="text" class="form-control" ng-change="searchIfUpdated()" uib-datepicker-popup ng-model="endDate" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+	          <span class="input-group-btn">
+	            <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+	          </span>
+	        </p>
+	      </div>
+      </div>
+      
+      
+      <div class="col-md-1">	
+			<div class="btn-group" uib-dropdown is-open="status.isopen">
+		      <button id="single-button-type" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="disabled">
+		        {{itemType_Label}} <span class="caret"></span>
+		      </button>
+		      <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button-type">
+		        <li role="menuitem"><a href="#" ng-click="setTypeLabel('all','All');">All</a></li>
+		        <li role="menuitem"><a href="#" ng-click="setTypeLabel('story','Stories');">Stories</a></li>
+		        <li role="menuitem"><a href="#" ng-click="setTypeLabel('comment','Comments');">Comments</a></li>
+		        <li role="menuitem"><a href="#" ng-click="setTypeLabel('job','Jobs');">Jobs</a></li>
+		        <li role="menuitem"><a href="#" ng-click="setTypeLabel('poll','Polls');">Polls</a></li>
+		      </ul>
+		    </div>
+	   </div>
+      
+      
+      <!-- div class="col-md-1">
+      	<button type = "button"  type="button" class="btn btn-sm btn-info"  ng-click="searchItems();setLabel('Customized') " >Search</button>
+	  </div -->
+	
+		<div class="col-md-1">	
+			<div class="btn-group" uib-dropdown is-open="status.isopen2">
+		      <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="disabled">
+		        {{duration_Label}} <span class="caret"></span>
+		      </button>
+		      <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+		        <li role="menuitem"><a href="#" ng-click="searchPosts('today');setLabel('Today');">Today</a></li>
+		        <li role="menuitem"><a href="#" ng-click="searchPosts('week');setLabel('This week');">This week</a></li>
+		        <li role="menuitem"><a href="#" ng-click="searchPosts('month');setLabel('This Month');">This Month</a></li>
+		        <li role="menuitem"><a href="#" ng-click="searchPosts('year');setLabel('This year');">This year</a></li>
+		        <li role="menuitem"><a href="#" ng-click="searchPosts('last_year');setLabel('Last year');">Last year</a></li>
+		      </ul>
+		    </div>
+	   </div> 
+    </div>
+	
+  </form>
+
+	
+	<h3 class="postInfo" style="margin-top:10px;">Search result</h3>
+	<div class = "tableContainer">
+	<div style="position:absolute; top:48%;left:45%" ng-show="loading"><img width="100" src="assets/images/spinner.gif"></div>
+	<table style="margin-top:10px">	
+	  <TR ng-repeat="x in search">
+	  <td><span class="postInfo">{{x.by}}</span></td>
+	    <td>
+	    	<a href="{{x.url}}" target="_blank"> {{x.title}} </a> 
+	    </td>
+	    <td>Upvotes <span class="postInfo">{{x.score}}</span></td>
+	    <td> <span class="postInfo">{{x.type}}</span></td>
+	    <td> <span class="postInfo">
+	    				<a href="#" ng-click = "save(x)"  style = "color:green;">
+	    				<span ng-show="!x.saved" >
+					        <span class="glyphicon glyphicon-floppy-saved"></span> Save
+	        				</span>
+        				</a>
+        				
+	    				<a href="#" ng-click = "remove(x)" style = "color:brown;">
+        				<span ng-show="x.saved" ng-click = "remove(x)" >
+					        <span class="glyphicon glyphicon-floppy-remove"></span> Remove
+	        				
+        				</span>
+        				</a>
+        				
+		</span></td>
+	  </TR>
+	</table>
+	</div>
+	<script type="text/javascript">
+	var app = angular.module('myApp', ['ngAnimate', 'ngSanitize', 'ui.bootstrap']);
+	app.controller('myCtrl', function($scope, $http, $log) {
+		//$scope.formData = {};
+		$scope.duration_Label = "Duration";
+		$scope.itemType_Label =  "All";
+		$scope.startDate =""; //"2007-06-05";
+		$scope.endDate = "";//"2017-12-12";
+		$scope.itemType = "all";
+		$scope.url = "search/";
+		$scope.setTypeLabel = function(itemType, label){
+			$scope.itemType_Label =  label;
+			$scope.itemType = itemType;
+			$scope.searchItems();
+		}
+		
+		$scope.searchIfUpdated = function(){
+			if($scope.startDate && $scope.endDate){
+				$scope.url = "search/";
+				$scope.searchItems();
+				$scope.duration_Label = "Duration";
+			}
+		}
+		
+		$scope.save = function(item){
+			$scope.loading = true;
+			$http({
+				  method :'POST',
+				  url : "save/",
+				  params : {id: item.id, time:item.time} })
+			  .then(function mySuccess(response) {
+			      //$scope.search = response.data;
+				  item.saved = true;
+				  $scope.loading = false;
+			    }, function myError(response) {
+			      //$scope.search = response.statusText;
+			    	$scope.loading = false;
+			  });
+		}
+		
+		$scope.remove = function(item){
+			$scope.loading = true;
+			$http({
+				  method :'POST',
+				  url : "remove/",
+				  params : {id: item.id, time:item.time}  })
+			  .then(function mySuccess(response) {
+			      //$scope.search = response.data;
+			      item.saved = false;
+			      $scope.loading = false;
+			    }, function myError(response) {
+			      //$scope.search = response.statusText;
+			    	$scope.loading = false;
+			  });
+		}
+		
+	 	$scope.searchItems = function(){	  
+	 		$scope.loading = true;
+			  $http({
+				  method :'POST',
+				  url : $scope.url,
+				  params : {startDate:$scope.startDate, endDate: $scope.endDate, type: $scope.itemType}  })
+			  .then(function mySuccess(response) {
+			      $scope.search = response.data;
+			      $scope.loading = false;
+			    }, function myError(response) {
+			    	$scope.loading = false;
+			      //$scope.search = response.statusText;
+			  });
+	 	}
+	 	
+	 	$scope.searchPosts = function(duration){
+	 		$scope.url = "search/"+ duration;
+	 		$scope.loading = true;
+	 		$http({
+				  method:'POST',
+				  url: $scope.url ,
+				  params :{type: $scope.itemType}})
+			  .then(function mySuccess(response) {
+				  $log.log(response.data);
+			      $scope.search = response.data;
+			      $log.log(response.data);
+			      $scope.loading = false;
+			    }, function myError(response) {
+			      //$scope.search = response.statusText;
+			    	$scope.loading = false;
+			  });
+	 	}
+	 	
+	  $scope.setLabel = function(label){
+		  $scope.duration_Label = label;
+		  $scope.startDate ="";
+		  $scope.endDate = "";
+	  }
+	  
+	  
+	  
+	  /////calendar 
+	$scope.today = function() {
+    $scope.dt = new Date();
+  };
+  $scope.today();
+
+  $scope.clear = function() {
+    $scope.dt = null;
+  };
+
+  $scope.inlineOptions = {
+    customClass: getDayClass,
+    minDate: new Date(),
+    showWeeks: true
+  };
+
+  $scope.dateOptions = {
+    dateDisabled: disabled,
+    formatYear: 'yy',
+    maxDate: new Date(2020, 5, 22),
+    minDate: new Date(),
+    startingDay: 1
+  };
+
+  // Disable weekend selection
+  function disabled(data) {
+    var date = data.date,
+      mode = data.mode;
+    return false; //mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+  }
+
+  $scope.toggleMin = function() {
+    $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+    $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+  };
+
+  $scope.toggleMin();
+
+  $scope.open1 = function() {
+    $scope.popup1.opened = true;
+  };
+
+  $scope.open2 = function() {
+    $scope.popup2.opened = true;
+  };
+
+  $scope.setDate = function(year, month, day) {
+    $scope.dt = new Date(year, month, day);
+  };
+
+  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+  $scope.format = $scope.formats[0];
+  $scope.altInputFormats = ['M!/d!/yyyy'];
+
+  $scope.popup1 = {
+    opened: false
+  };
+
+  $scope.popup2 = {
+    opened: false
+  };
+
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  var afterTomorrow = new Date();
+  afterTomorrow.setDate(tomorrow.getDate() + 1);
+  $scope.events = [
+    {
+      date: tomorrow,
+      status: 'full'
+    },
+    {
+      date: afterTomorrow,
+      status: 'partially'
+    }
+  ];
+
+  function getDayClass(data) {
+    var date = data.date,
+      mode = data.mode;
+    if (mode === 'day') {
+      var dayToCheck = new Date(date).setHours(0,0,0,0);
+
+      for (var i = 0; i < $scope.events.length; i++) {
+        var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+
+        if (dayToCheck === currentDay) {
+          return $scope.events[i].status;
+        }
+      }
+    }
+
+    return '';
+  }
+	  
+	  
+	  
+	  
+	  
+	  ///
+	});
+</script>
+
+</body>
+</html>
