@@ -11,7 +11,7 @@ public class IndexBuilderController {
 	@Autowired
 	ItemService itemService;
 	
-	@RequestMapping(path="build/start")
+	@RequestMapping(path="/build/start")
 	void startIndexBuilder() {
 		if(!itemService.isBuilding()) {
 			itemService.setBuilding(true);
@@ -20,7 +20,7 @@ public class IndexBuilderController {
 		}
 	}
 	
-	@RequestMapping("build/reset")
+	@RequestMapping("/build/reset")
 	void resetIndexBuilder() {
 		// Interrupt any thread building the index;
 		// Clear the index
