@@ -33,7 +33,7 @@ import com.example.demo.util.DateUtil;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.javafx.tk.Toolkit.Task;
+
 
 /**
 	Calendar calendar = Calendar.getInstance();
@@ -50,6 +50,7 @@ public class ItemService {
 	private Map<String, List<Integer>> itemCategorization;
 	private Map<Integer, List<ItemBrief>> allFilteredItems;
 	private Configuration config;
+	private boolean building = false;
 	
 	public ItemService(Map<String, List<Integer>> itemCategorization, Map<Integer,List<ItemBrief>> allFilteredItems, Configuration config) {
 		this.itemCategorization = itemCategorization;
@@ -61,7 +62,7 @@ public class ItemService {
 		this.itemCategorization = new ConcurrentHashMap<String, List<Integer>>();
 		this.allFilteredItems = new ConcurrentHashMap<Integer,List<ItemBrief>>();
 		this.config = new Configuration();
-		buildIndex();
+		
 	}
 	
 	Callable<String> readAndIndexItem(String url) {
@@ -228,6 +229,7 @@ public class ItemService {
 		}
 		
 		try {
+			building = true;
 			List<Future>  tasks = new LinkedList<Future>();
 			ExecutorService executor = Executors.newFixedThreadPool(config.NO_OF_WORKERS_THREAD);
 			LongStream.range(config.FIRST_ITEM_ID, config.FIRST_ITEM_ID + config.NO_OF_ITEMS_TO_PROCESS)
@@ -255,6 +257,8 @@ public class ItemService {
 			System.out.println("Error occured while processing..");
 			e.printStackTrace();
 		}
+		
+		building = false;
 		
 	}
 	
@@ -351,5 +355,13 @@ public class ItemService {
 			return false;
 		}
 	 	
+	}
+
+	public boolean isBuilding() {
+		return building;
+	}
+
+	public void setBuilding(boolean building) {
+		this.building = building;
 	}
 }
