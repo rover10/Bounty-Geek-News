@@ -15,7 +15,8 @@ public class IndexBuilderController {
 	void startIndexBuilder() {
 		if(!itemService.isBuilding()) {
 			itemService.setBuilding(true);
-			new Thread(()-> {itemService.buildIndex();}).start();
+			//new Thread(()-> {itemService.buildIndex();}).start();
+			itemService.buildIndex();
 		}
 	}
 	
@@ -25,8 +26,8 @@ public class IndexBuilderController {
 		// Clear the index
 		
 		itemService.setBuilding(true);
-		new Thread(()-> {itemService.buildIndex();}).start();
-		
+		//new Thread(()-> {itemService.buildIndex();}).start();
+		itemService.buildIndex();
 		
 		
 	}
