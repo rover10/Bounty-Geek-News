@@ -27,7 +27,7 @@ public class Configuration {
 		STORY = "story";
 		FIRST_ITEM_ID = 16016181L - 100000L;
 		NO_OF_ITEMS_TO_PROCESS = 100000L; // Total itmes as off now(12/27/2017) from https://hacker-news.firebaseio.com/v0/maxitem.json
-		NO_OF_WORKERS_THREAD = 400;
+		NO_OF_WORKERS_THREAD = 40;
 		FORMAT = ".json";
 		ITEM_URI = "https://hacker-news.firebaseio.com/v0/item/";
 		TOP = 50;

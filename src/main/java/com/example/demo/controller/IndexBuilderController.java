@@ -13,7 +13,7 @@ public class IndexBuilderController {
 	
 	@RequestMapping(path="/build/start")
 	void startIndexBuilder() {
-		System.out.println("Request: START INDEXING");
+		System.out.println(" Request: START INDEXING");
 		if(!itemService.isBuilding()) {
 			System.out.println("Staring indexing");
 			itemService.setBuilding(true);
