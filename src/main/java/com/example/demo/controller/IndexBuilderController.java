@@ -13,7 +13,9 @@ public class IndexBuilderController {
 	
 	@RequestMapping(path="/build/start")
 	void startIndexBuilder() {
+		System.out.println("Request: START INDEXING");
 		if(!itemService.isBuilding()) {
+			System.out.println("Staring indexing");
 			itemService.setBuilding(true);
 			//new Thread(()-> {itemService.buildIndex();}).start();
 			itemService.buildIndex();
@@ -24,7 +26,8 @@ public class IndexBuilderController {
 	void resetIndexBuilder() {
 		// Interrupt any thread building the index;
 		// Clear the index
-		
+
+		System.out.println("RESET indexing");
 		itemService.setBuilding(true);
 		//new Thread(()-> {itemService.buildIndex();}).start();
 		itemService.buildIndex();
