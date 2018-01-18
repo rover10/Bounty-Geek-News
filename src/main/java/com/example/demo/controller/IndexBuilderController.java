@@ -18,6 +18,7 @@ public class IndexBuilderController {
 			System.out.println("Staring indexing");
 			itemService.setBuilding(true);
 			new Thread(()-> {itemService.buildIndex();}).start();
+		
 			//itemService.buildIndex();
 		}
 	}
@@ -30,6 +31,7 @@ public class IndexBuilderController {
 		System.out.println("RESET indexing");
 		itemService.setBuilding(true);
 		new Thread(()-> {itemService.buildIndex();}).start();
+		
 		//itemService.buildIndex();
 		
 		

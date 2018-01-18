@@ -20,6 +20,7 @@ public class Configuration {
 
 	// Default configuration
 	public Configuration(){
+		
 		MIN_SCORE = 250;
 		ALL = "all";
 		JOB = "job";
